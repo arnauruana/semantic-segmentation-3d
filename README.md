@@ -13,6 +13,7 @@ Final project developed for the [UPC-AIDL](https://www.talent.upc.edu/ing/estudi
   * [Repository](#repository)
   * [Environment](#environment)
   * [Requirements](#requirements)
+  * [Dataset](#dataset)
 * [License](#license)
 * [Authors](#authors)
 
@@ -73,6 +74,20 @@ In both cases, we need to execute this line to install all the `Python` requirem
 ```bash
 pip install -r requirements.txt
 ```
+
+### Dataset
+
+The original dataset, formally called [IQmulus & TerraMobilita Contest](http://data.ign.fr/benchmarks/UrbanAnalysis/), is a public dataset containing a point cloud from a $200$ meter street in Paris, gathered using the [LiDAR](https://www.ibm.com/topics/lidar) technology. All its $300$ million points are labeled with their respective classes and identifiers making it suitable for either [Semantic Segmentation](https://paperswithcode.com/task/semantic-segmentation) or [Instance Segmentation](https://paperswithcode.com/task/instance-segmentation) tasks.
+
+The filtered and split version of this dataset can be found in the following [link](https://drive.google.com/file/d/1fYo03lGE9E0yDbgx-KzCnDr8_wUdinKU/view?usp=drive_link). This is the actual dataset we have worked with.
+
+Once downloaded and placed it under the root directory of this project, you can decompress it using the following command:
+
+```bash
+unzip data.zip
+```
+
+> You can also use any program capable of decompressing files. Such as [7-zip](https://www.7-zip.org/), [WinRAR](https://www.rarlab.com/) or [WinZip](https://www.winzip.com/en/) among others.
 
 ## License
 
