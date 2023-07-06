@@ -11,6 +11,8 @@ Final project developed for the [UPC-AIDL](https://www.talent.upc.edu/ing/estudi
 * [Description](#description)
 * [Installation](#installation)
   * [Repository](#repository)
+  * [Environment](#environment)
+  * [Requirements](#requirements)
 * [License](#license)
 * [Authors](#authors)
 
@@ -34,6 +36,42 @@ git clone git@github.com:arnauruana/semantic-segmentation-3d.git
 
 ```bash
 cd semantic-segmentation-3d
+```
+
+### Environment
+
+If you don't want to use `conda` environments you can [skip](#requirements) this section, otherwise you will need to download it manually from [here](https://docs.conda.io/en/latest/miniconda.html).
+
+Once installed, we can run the following commands to set up the execution environment.
+
+1.- Create the environment:
+
+```bash
+conda create --name aidl-project python --yes
+```
+
+2.- Activate the environment:
+
+```bash
+conda activate aidl-project
+```
+
+3.- Install the `Python` requirements from the [next](#requirements) section.
+
+### Requirements
+
+Unless you followed the previous [instructions](#environment), you must install `Python` (either manually from this [link](https://www.python.org/downloads/) or using your favorite package manager).
+
+```bash
+sudo pacman -S python --needed --noconfirm
+```
+
+> Please, note that the previous command will only work on Arch-based Linux distributions and, most likely, you will need to adapt it for yours.
+
+In both cases, we need to execute this line to install all the `Python` requirements:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## License
