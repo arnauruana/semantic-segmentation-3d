@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "davidanson.vscode-markdownlint", // markdown formatter
+        "editorconfig.editorconfig", // editorconfig parser
+        "ms-python.black-formatter", // python formatter
+        "ms-python.isort", // library sorter
+        "ms-python.python", // python enhancer
+        "ms-python.vscode-pylance", // python enhancer
+        "njpwerner.autodocstring", // docstring generator
+        "streetsidesoftware.code-spell-checker", // spell checker
+    ],
+}

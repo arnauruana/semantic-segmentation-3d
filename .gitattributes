@@ -1,0 +1,49 @@
+# =============================== Line Endings =============================== #
+
+# set default behaviour to automatically normalize line endings
+*text=auto
+
+# force batch scripts to always use CRLF line endings.
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+
+# force bash scripts to always use LF line endings.
+*.sh text eol=lf
+
+# =============================== Binary Files =============================== #
+
+# archives
+*.7z    binary
+*.br    binary
+*.gz    binary
+*.tar   binary
+*.zip   binary
+
+# documents
+*.pdf   binary
+
+# images
+*.gif   binary
+*.ico   binary
+*.jpg   binary
+*.pdf   binary
+*.png   binary
+*.psd   binary
+*.webp  binary
+
+# fonts
+*.woff2 binary
+
+# other
+*.exe   binary
+
+# sources
+*.class binary
+*.dll   binary
+*.ear   binary
+*.jar   binary
+*.jks   binary
+*.so    binary
+*.war   binary
+
+# ============================================================================ #
