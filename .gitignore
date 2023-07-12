@@ -3,6 +3,7 @@
 # folders
 data/
 plot/
+model/
 
 # files
 *.zip
