@@ -1,12 +1,10 @@
 {
-    // editor-general
     "window.title": "${dirty} ${rootNameShort} @ ${activeEditorMedium}",
     "editor.rulers": [
         80,
     ],
     "editor.wordWrap": "bounded",
     "editor.wordWrapColumn": 80,
-    // language-specific
     "[markdown]": {
         "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
         "editor.formatOnSave": true,
@@ -23,13 +21,12 @@
             "source.organizeImports": true,
         },
     },
-    // extension-specific
     "autoDocstring.startOnNewLine": true,
     "cSpell.files": [
         "README.md",
     ],
     "isort.args": [
         "--profile",
-        "black"
+        "black",
     ],
 }
