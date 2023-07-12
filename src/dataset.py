@@ -63,7 +63,10 @@ class PointCloud(torch.Tensor):
             for idx, cls in enumerate(classes):
                 labels[idx, cls] = 1
             return torch.from_numpy(labels)
-        return torch.Tensor(self["class"])
+
+        return torch.tensor(
+            [list(Dataset.COLORS).index(str(int(cls.item()))) for cls in self["class"]],
+        ).type(torch.long)
 
     def sample(self, samples):
         building = (self["class"] == 203000000).nonzero()
