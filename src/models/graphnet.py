@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import MLP, DynamicEdgeConv
 
 
-class GraphNet(nn.Module):
+class DGCNN(nn.Module):
     def __init__(self, out_channels, k=30, aggr="max"):
         super().__init__()
 
@@ -15,25 +15,11 @@ class GraphNet(nn.Module):
         self.mlp = MLP([3 * 64, 1024, 256, 128, out_channels], dropout=0.5, norm=None)
 
     def forward(self, data):
-        batch_size, num_points = data.shape[0], data.shape[1]
-
-        data = torch.reshape(data, (batch_size * num_points, -1))
-
-        x = data.feats()
-        x = x.float()
-        x = x.cuda() if data.is_cuda else x.cpu()
-
-        pos = data.coords()
-        pos = pos.float()
-        pos = pos.cuda() if data.is_cuda else pos.cpu()
-
-        batch = torch.ones(len(data))
-        for i in range(batch_size):
-            batch[num_points * i : num_points + num_points * i] = i
-        batch.float()
-        batch = batch.cuda() if data.is_cuda else batch.cpu()
+        x, pos, batch = data.x, data.pos, data.batch
+        x, pos, batch = x.float(), pos.float(), batch.float()
 
         x0 = torch.cat([x, pos], dim=-1)
+
         x1 = self.conv1(x0, batch)
         x2 = self.conv2(x1, batch)
         x3 = self.conv3(x2, batch)
