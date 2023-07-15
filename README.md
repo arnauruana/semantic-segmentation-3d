@@ -14,6 +14,7 @@ Final project developed for the [UPC-AIDL](https://www.talent.upc.edu/ing/estudi
   * [Environment](#environment)
   * [Requirements](#requirements)
   * [Dataset](#dataset)
+* [Uninstalling](#uninstalling)
 * [License](#license)
 * [Authors](#authors)
 
@@ -88,6 +89,30 @@ unzip data.zip
 ```
 
 > You can also use any program capable of decompressing files. Such as [7-zip](https://www.7-zip.org/), [WinRAR](https://www.rarlab.com/) or [WinZip](https://www.winzip.com/en/) among others.
+
+## Uninstalling
+
+In order to uninstall the project and all its previously installed dependencies, you can execute these commands:
+
+1.- Uninstall python requirements
+
+```bash
+pip uninstall -r requirements.txt
+```
+
+2.- Remove conda environment.
+
+```bash
+conda deactivate
+conda remove --name aidl-project --all --yes
+```
+
+3.- Remove repository:
+
+```bash
+cd ..
+rm -rf semantic-segmentation-3d
+```
 
 ## License
 
