@@ -192,7 +192,7 @@ if __name__ == "__main__":
 
     print(config)
 
-    class_weights = joblib.load("class_weights_isns.joblib")
+    class_weights = joblib.load("config/class_weights_isns.joblib")
     class_weights = torch.FloatTensor(class_weights).to(config["device"])
 
     sys.exit(main(sys.argv))
