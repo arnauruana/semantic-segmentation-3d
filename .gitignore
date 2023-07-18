@@ -2,10 +2,11 @@
 
 # folders
 data/
-plot/
 model/
+plot/
 
 # files
+*.pt
 *.zip
 
 # ============================ Visual Studio Code ============================ #
