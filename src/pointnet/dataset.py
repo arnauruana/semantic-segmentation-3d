@@ -10,6 +10,13 @@ from pointcloud import PointCloud
 
 
 class Dataset(torch.utils.data.Dataset):
+    """
+    Custom Dataset for PointNet.
+
+    Extends:
+        torch.utils.data.Dataset
+    """
+
     def __init__(
         self,
         path: str = "data/",
@@ -19,7 +26,7 @@ class Dataset(torch.utils.data.Dataset):
         rotate: bool = False,
     ) -> None:
         """
-        Custom Dataset.
+        Custom Dataset for PointNet.
 
         Args:
             path (str, optional): dataset's path with its corresponding tensors. Defaults to "data/".
@@ -49,6 +56,15 @@ class Dataset(torch.utils.data.Dataset):
         return len(self.splits)
 
     def __getitem__(self, idx: int) -> PointCloud:
+        """
+        Gets elements of the dataset.
+
+        Args:
+            idx (int): dataset's indices.
+
+        Returns:
+            PointCloud: selected pointcloud.
+        """
         cloud = PointCloud(torch.load(self.splits[idx]))
         if self.samples > 0:
             cloud = cloud.sample(self.samples)
@@ -57,3 +73,12 @@ class Dataset(torch.utils.data.Dataset):
         if self.rotate:
             cloud = cloud.rotate()
         return cloud
+
+
+if __name__ == "__main__":
+    dataset = Dataset(
+        samples=1000,
+        shuffle=True,
+        rotate=True,
+    )
+    print(dataset[0])

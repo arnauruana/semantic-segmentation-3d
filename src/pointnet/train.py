@@ -76,12 +76,11 @@ def train(network, criterion, optimizer, scheduler, trainset, validset):
 
     @torch.no_grad()
     def valid_epoch():
-        max_miou = 0
-        hits = 0
-        total = 0
-        ious = []
+        global max_miou
+        hits, total = 0, 0
+        ious, losses = [], []
         network.eval()
-        for _, clouds in enumerate(validset):
+        for clouds in validset:
             coords = torch.stack([cloud.coords() for cloud in clouds])
             coords = coords.transpose(2, 1)
             coords = coords.float()
@@ -109,21 +108,35 @@ def train(network, criterion, optimizer, scheduler, trainset, validset):
             ious.append(iou)
             total += len(labels)
 
+            labels = torch.unsqueeze(labels, dim=0)
+            labels = labels.long()
+            labels = labels.to(config["device"])
+
+            predictions = torch.unsqueeze(predictions, dim=0)
+            predictions = predictions.transpose(2, 1)
+            predictions = predictions.float()
+            predictions = predictions.to(config["device"])
+
+            loss = criterion(predictions, labels)
+            losses.append(loss.item())
+
         accuracy = hits / total
         miou = torch.mean(torch.tensor(ious))
+        mloss = torch.mean(torch.tensor(losses))
+        print(f"   - valid loss: {mloss:.4f}")
         print(f"   - valid accu: {accuracy:.4f}")
         print(f"   - valid mIoU: {miou:.4f}")
 
         name = Path(f"pointnet-s{config['samples']}")
         os.makedirs(path_model, exist_ok=True)
         os.makedirs(path_model / name, exist_ok=True)
-        if miou > max_miou:
+        if miou.item() > max_miou:
+            max_miou = miou.item()
             torch.save(network.state_dict(), path_model / name / Path("best_ckpt.pt"))
             np.savetxt(
                 fname=path_model / name / Path("metrics.txt"),
                 X=[accuracy, miou],
             )
-
         torch.save(network.state_dict(), path_model / name / Path("last_ckpt.pt"))
 
     for epoch in range(config["epochs"]):
@@ -162,15 +175,6 @@ def main(_):
         batch_size=1,
         shuffle=False,
     )
-    testset = DataLoader(
-        dataset=Dataset(
-            indices=list(indices_test),
-            shuffle=False,
-            rotate=False,
-        ),
-        batch_size=1,
-        shuffle=False,
-    )
 
     network = Model(PointCloud.NUM_CLASSES, feature_transform=True)
     network = network.to(config["device"])
@@ -187,16 +191,17 @@ def main(_):
 
 
 if __name__ == "__main__":
-    path_data = Path("data/")
     path_model = Path("model/")
+    max_miou = 0
+
     config = {
         "batch": 8,
-        "epochs": 10,
-        "gamma": 0.5,
+        "epochs": 100,
+        "gamma": 0.1,
         "logs": 5,
-        "lr": 1e-2,
+        "lr": 0.01,
         "samples": 10000,
-        "step": 2,
+        "step": 10,
     }
     config["device"] = "cuda" if torch.cuda.is_available() else "cpu"
     config["seed"] = seed
