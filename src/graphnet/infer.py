@@ -56,5 +56,5 @@ def main(_):
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     path_model = Path("model/graphnet.pt")
-    knn = 30
+    knn = 100
     sys.exit(main(sys.argv))
