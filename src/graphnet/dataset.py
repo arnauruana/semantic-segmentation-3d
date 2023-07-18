@@ -14,7 +14,7 @@ from pointcloud import PointCloud
 
 class Dataset(torch_geometric.data.Dataset):
     """
-    Custom Dataset.
+    Custom Dataset for Graphnet.
 
     Extends:
         torch_geometric.data.Dataset
@@ -31,7 +31,7 @@ class Dataset(torch_geometric.data.Dataset):
         transform: T.BaseTransform = None,
     ) -> None:
         """
-        Custom Dataset.
+        Custom Dataset for Graphnet.
 
         Args:
             path (str, optional): dataset's path with its corresponding tensors. Defaults to "data/".

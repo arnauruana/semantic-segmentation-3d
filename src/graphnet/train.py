@@ -64,10 +64,9 @@ def train(network, criterion, optimizer, scheduler, trainset, validset):
 
     @torch.no_grad()
     def valid_epoch():
-        max_miou = 0
-        hits = 0
-        total = 0
-        ious = []
+        global max_miou
+        hits, total = 0, 0
+        ious, losses = [], []
         network.eval()
         for _, clouds in enumerate(validset):
             clouds = clouds.to(config["device"])
@@ -75,26 +74,30 @@ def train(network, criterion, optimizer, scheduler, trainset, validset):
             predictions = network(clouds)
             predictions = predictions.to(config["device"])
 
+            loss = criterion(predictions, clouds.y)
+            losses.append(loss.item())
+
             hits, iou = correct_predictions(predictions, clouds.y, hits)
             ious.append(iou)
             total += len(clouds.x)
 
         accuracy = hits / total
         miou = torch.mean(torch.tensor(ious))
+        mloss = torch.mean(torch.tensor(losses))
+        print(f"   - valid loss: {mloss:.4f}")
         print(f"   - valid accu: {accuracy:.4f}")
         print(f"   - valid mIoU: {miou:.4f}")
 
         name = Path(f"graphnet-s{config['samples']}-k{config['k']}")
         os.makedirs(path_model, exist_ok=True)
         os.makedirs(path_model / name, exist_ok=True)
-        if miou > max_miou:
-            max_miou = miou
+        if miou.item() > max_miou:
+            max_miou = miou.item()
             torch.save(network.state_dict(), path_model / name / Path("best_ckpt.pt"))
             np.savetxt(
                 fname=path_model / name / Path("metrics.txt"),
                 X=[accuracy, miou],
             )
-
         torch.save(network.state_dict(), path_model / name / Path("last_ckpt.pt"))
 
     for epoch in range(config["epochs"]):
@@ -136,16 +139,6 @@ def main(_):
         batch_size=1,
         shuffle=False,
     )
-    testset = DataLoader(
-        dataset=Dataset(
-            indices=list(indices_test),
-            shuffle=False,
-            rotate=False,
-            pre_transform=T.KNNGraph(config["k"]),
-        ),
-        batch_size=1,
-        shuffle=False,
-    )
 
     network = Model(
         in_channels=len(PointCloud.COLUMNS["features"])
@@ -172,11 +165,12 @@ def main(_):
 
 if __name__ == "__main__":
     path_model = Path("model/")
+    max_miou = 0
 
     config = {
         "batch": 8,
-        "epochs": 10,
-        "k": 30,
+        "epochs": 30,
+        "k": 100,
         "logs": 5,
         "lr": 0.1,
         "samples": 10000,

@@ -6,6 +6,7 @@ model/
 plot/
 
 # files
+*.csv
 *.pt
 *.zip
 
