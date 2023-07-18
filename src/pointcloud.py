@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -164,7 +163,7 @@ class PointCloud(torch.Tensor):
         Samples the pointcloud randomly.
 
         Args:
-            samples (int): number of random samples (points) to be chosen.
+            samples (int): number of random samples (points) to be chosen. It tries to first delete points from the 3 most common classes if possible, otherwise completely random.
 
         Returns:
             Self: pointcloud's subset of samples.
@@ -172,10 +171,68 @@ class PointCloud(torch.Tensor):
         assert samples > 0, "samples > 0"
         assert samples <= len(self), f"samples <= {len(self)}"
 
-        idxs = set()
-        while len(idxs) < samples:
-            idxs.add(np.random.randint(0, len(self)))
-        return self[list(idxs)]
+        building = (self["class"] == 203000000).nonzero()
+        road = (self["class"] == 202020000).nonzero()
+        sidewalk = (self["class"] == 202030000).nonzero()
+
+        num_building_ = len(building)
+        num_road_ = len(road)
+        num_sidewalk_ = len(sidewalk)
+        num_total_ = num_building_ + num_road_ + num_sidewalk_
+
+        wb = num_building_ / (num_total_)
+        wr = num_road_ / (num_total_)
+        ws = num_sidewalk_ / (num_total_)
+
+        num_building = round((len(self) - samples) * wb)
+        num_road = round((len(self) - samples) * wr)
+        num_sidewalk = round((len(self) - samples) * ws)
+        num_total = num_building + num_road + num_sidewalk
+
+        if (
+            0.8 * num_building_ > num_building
+            and 0.8 * num_road_ > num_road
+            and 0.8 * num_sidewalk_ > num_sidewalk
+        ):
+            if len(self) - num_total > samples:
+                num_building += abs((len(self) - samples) - num_total)
+            elif len(self) - num_total < samples:
+                num_sidewalk -= abs((len(self) - samples) - num_total)
+
+            idxs_building = set()
+            idxs_road = set()
+            idxs_sidewalk = set()
+
+            while len(idxs_building) < num_building:
+                idxs_building.add(np.random.randint(0, len(building)))
+
+            while len(idxs_road) < num_road:
+                idxs_road.add(np.random.randint(0, len(road)))
+
+            while len(idxs_sidewalk) < num_sidewalk:
+                idxs_sidewalk.add(np.random.randint(0, len(sidewalk)))
+
+            samples_building = [
+                building[idx_building] for idx_building in idxs_building
+            ]
+            samples_road = [road[idx_road] for idx_road in idxs_road]
+            samples_sidewalk = [
+                sidewalk[idx_sidewalk] for idx_sidewalk in idxs_sidewalk
+            ]
+
+            samples = samples_building + samples_road + samples_sidewalk
+
+            data = self.numpy()
+            data = np.delete(self.numpy(), samples, axis=0)
+            data = PointCloud(torch.from_numpy(data))
+
+        else:
+            idxs = set()
+            while len(idxs) < samples:
+                idxs.add(np.random.randint(0, len(self)))
+            data = self[list(idxs)]
+
+        return data
 
     def shuffle(self):
         """
@@ -238,6 +295,7 @@ class PointCloud(torch.Tensor):
         name: str = "demo",
         save: bool = True,
         show: bool = False,
+        predictions: torch.Tensor = None,
     ) -> None:
         """
         Plots the pointcloud in a 3d space.
@@ -247,15 +305,24 @@ class PointCloud(torch.Tensor):
             name (str, optional): figure's name. Defaults to "demo".
             save (bool, optional): whether or not to save the results in memory. Defaults to True.
             show (bool, optional): whether or not to show the results immediately after generating (can be unstable). Defaults to False.
+            predictions (torch.Tensor, optional): if present, the point labels will be replaced by the predictions so we can plot them instead of the ground truth. Defaults to None.
         """
         assert save == True or show == True, "save and show are false"
 
         column = PointCloud.COLUMNS["labels"]["semantic"]
+        colors = [str(int(label.item())) for label in self[column]]
+
+        if predictions is not None:
+            predictions = torch.argmax(predictions, dim=-1)
+            colors = [
+                list(PointCloud.COLOR_SCHEME)[label.item()] for label in predictions
+            ]
+
         figure = px.scatter_3d(
             x=self["x"],
             y=self["y"],
             z=self["z"],
-            color=[str(int(label.item())) for label in self[column]],
+            color=colors,
             color_discrete_map=PointCloud.COLOR_SCHEME,
             title=f"POINTCLOUD - {name.upper()} - {len(self)} POINTS",
         )
@@ -263,9 +330,7 @@ class PointCloud(torch.Tensor):
 
         if save:
             os.makedirs(path, exist_ok=True)
-            time = str(datetime.timestamp(datetime.now())).split(".")[0]
-            figure.write_json(Path(path) / Path(f"{name}__{time}.json"))
-            figure.write_html(Path(path) / Path(f"{name}__{time}.html"))
+            figure.write_html(Path(path) / Path(f"{name}.html"))
 
         if show:
             figure.show()
@@ -288,4 +353,4 @@ if __name__ == "__main__":
 
     cloud = cloud.shuffle()
     cloud = cloud.rotate()
-    cloud.plot("plot")
+    cloud.plot()
