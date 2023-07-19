@@ -24,9 +24,18 @@
     "autoDocstring.startOnNewLine": true,
     "cSpell.files": [
         "README.md",
+        "doc/README.md"
     ],
     "isort.args": [
         "--profile",
         "black",
     ],
+    "markdownlint.config": {
+        "MD033": {
+            "allowed_elements": [
+                "p",
+                "img",
+            ],
+        },
+    },
 }
