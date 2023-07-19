@@ -22,17 +22,17 @@ The developers are [**Arnau Ruana**](https://github.com/arnauruana), [**Rafel Pa
 
 ## Introduction
 
-The main objective is to create a [deep learning](https://en.wikipedia.org/wiki/Deep_learning) model able to perform [semantic segmentation](https://paperswithcode.com/task/semantic-segmentation) over a given [point cloud](https://en.wikipedia.org/wiki/Point_cloud), one of the multiple ways of representing 3D data.
-
 3D Semantic Segmentation is a [computer vision](https://www.ibm.com/topics/computer-vision) task that involves dividing a 3D point cloud or 3D mesh into semantically meaningful parts or regions. Its goal is to identify and label different objects and parts within a 3D scene, which can be very useful for applications such as [robotics](https://en.wikipedia.org/wiki/Robotics), [autonomous driving](https://en.wikipedia.org/wiki/Vehicular_automation), and [augmented reality](https://en.wikipedia.org/wiki/Augmented_reality).
 
 <p align="center">
   <img src="https://www.octo.us/wp-content/uploads/2020/09/Picture2.jpg" width=640/>
 </p>
 
+The main objective of this project is to create a [deep learning](https://en.wikipedia.org/wiki/Deep_learning) model able to perform [semantic segmentation](https://paperswithcode.com/task/semantic-segmentation) over a given [point cloud](https://en.wikipedia.org/wiki/Point_cloud).
+
 To achieve this, we are going to explore some state-of-the-art techniques and apply them to the field of 3D data analysis. As we will see throughout this document, by leveraging the power of Deep Learning models, we can extract meaningful information from 3D data.
 
-The outcome of this project will be two solid models of Semantic Segmentation with the understanding of urban scenes. The model will be trained and evaluated on specific datasets, which will allow reproducibility and comparability of the results.
+The outcome will be two solid models of Semantic Segmentation with the understanding of urban scenes. The model will be trained and evaluated on specific datasets, which will allow reproducibility and comparability of the results.
 
 ## Motivation
 
